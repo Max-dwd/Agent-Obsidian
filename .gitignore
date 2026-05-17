@@ -1,0 +1,18 @@
+# macOS and local filesystem metadata
+.DS_Store
+**/.DS_Store
+
+# Obsidian local workspace, plugin state, and user-specific settings
+.obsidian/
+
+# Human/project data stays local. Keep only folder scaffolding in git.
+Delegates/**
+Projects/**
+Artifacts/**
+
+!Delegates/
+!Projects/
+!Artifacts/
+!Delegates/.gitkeep
+!Projects/.gitkeep
+!Artifacts/.gitkeep
