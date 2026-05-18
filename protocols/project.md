@@ -1,8 +1,10 @@
 # Project Protocol
 
-`Projects/` 保存长期项目语境和状态账本。它用于让 agent 从一个项目继续工作、补充状态、链接成果材料，而不是替代执行目录、repo、delegate review 队列或完整日志。
+`Projects/` 保存长期项目语境和状态账本。它用于在用户明确要求创建 / 继续 project 时，额外记录项目背景、状态摘要、delegate 链接和成果材料；它不替代执行目录、repo、delegate 任务队列或完整日志。
 
 Source of truth 是本文件和 `Projects/*.md`。Skill 可以帮助创建或更新项目页，但不能替代本协议。
+
+Project protocol 不能单独执行任务。任何创建 / 继续 project 的请求，都必须先按 `protocols/delegate.md` 创建或更新 delegate page，再把项目摘要和链接写入 `Projects/`。
 
 ## 文件位置
 
@@ -71,44 +73,47 @@ Frontmatter 可以随项目状态更新，但正文状态记录应保持 append-
 **交付结果：**（如有）
 链接到 `Artifacts/` 或执行目录里的成果材料。
 
-**需要人工关注：**（如有）
-需要人类决策、批准、补资料或 review 的事项。这里出现内容时，通常也要创建或链接 delegate。
+**相关任务：**
+链接当前 delegate page。Project page 不承载任务正文，只指向 delegate。
 
 **下一步行动：**（如有）
-下一项具体步骤。若需要 agent 后续执行，通常也要创建或链接 delegate。
+下一项具体步骤。需要 agent 后续执行时，写到 delegate 的 `Next` 或 follow-up delegate 里；project page 只保留摘要和链接。
 ```
 
 如果已有项目页结构不同，不要为了套模板重写整页。优先保留原文，在最合适的位置追加新的状态条目；必要时只补缺失 frontmatter 或明显缺失的顶层标题。
 
 ## 创建项目
 
-只有用户明确要求“创建项目”或“create project”时，agent 才能创建新的 `Projects/*.md`。如果用户只是说“继续 project”、“记录到 project”、“整理项目”或提到某个项目名，agent 必须先查找已有项目；找不到时停止并说明没有匹配项目，不要自动新建。
+只有用户明确要求“创建项目”或“create project”时，agent 才能创建新的 `Projects/*.md`。创建 project 仍必须先走 delegate：先创建或更新 `Delegates/*.md`，再在 project page 里记录摘要和 delegate 链接。
+
+如果用户只是说“继续 project”、“记录到 project”、“整理项目”或提到某个项目名，agent 必须先查找已有项目；找不到时在 delegate 中说明没有匹配项目，不要自动新建。
 
 创建项目时：
 
-1. 先查 `Projects/` 是否已有同一项目或近似项目。
-2. 如果已有，继续更新旧项目页，不创建重复页。
-3. 如果没有，创建 `Projects/{short-project-name}.md`。
-4. 写清项目目标、真实工作目录、关键来源、当前状态和下一步。
-5. 如果创建项目本身需要人类确认、批准范围或补资料，再按 `protocols/delegate.md` 创建 `task_kind: project_setup` 的 delegate page，并把路径写进 `related_delegates`。
+1. 先按 `protocols/delegate.md` 创建或更新 delegate page；创建项目通常使用 `task_kind: project_setup`。
+2. 再查 `Projects/` 是否已有同一项目或近似项目。
+3. 如果已有，继续更新旧项目页，不创建重复页。
+4. 如果没有，创建 `Projects/{short-project-name}.md`。
+5. 写清项目目标、真实工作目录、关键来源、当前状态和下一步摘要。
+6. 在 project frontmatter 的 `related_delegates` 写入当前 delegate 路径；在 delegate frontmatter 的 `related_projects` 写入当前 project 路径。
 
 ## 继续项目
 
-继续项目前必须读取：
+继续 project 前必须先有当前 delegate。读取顺序：
 
-1. 项目页 frontmatter。
-2. `# Context` 和最近的 `# Status Log` 条目。
-3. frontmatter 中的 `artifacts`、`related_delegates`、`source_links`，只读取和当前任务相关的内容。
-4. 如果任务来自 delegate 的 `# Human Comment`、`## Needs Review` 或 `## Next`，这些人类反馈优先于项目页旧状态。
+1. 当前 delegate page 的 frontmatter、`# Task`、`# Human Comment`、`## Needs Review`、`## Next`、`related_*` 和 `artifacts`。
+2. 项目页 frontmatter。
+3. `# Context` 和最近的 `# Status Log` 条目。
+4. project frontmatter 中的 `artifacts`、`related_delegates`、`source_links`，只读取和当前任务相关的内容。
+5. 如果任务来自 delegate 的 `# Human Comment`、`## Needs Review` 或 `## Next`，这些人类反馈优先于项目页旧状态。
 
-如果无法找到唯一项目页，且用户没有明确说“创建项目”或“create project”，停止并向用户说明需要指定已有项目或明确要求创建项目。
+如果无法找到唯一项目页，且用户没有明确说“创建项目”或“create project”，在 delegate 中说明需要指定已有项目或明确要求创建项目，不要自动新建 project。
 
 继续后的写入规则：
 
-- 项目页只追加简洁状态、证据、成果链接和下一步，不塞原始日志。
+- 项目页只追加简洁状态、证据、成果链接和当前 delegate 链接，不塞原始日志，不复制 delegate 正文。
 - 长内容先写成 `Artifacts/` 里的独立交付物，再在项目页链接。
-- 需要人类 review / approval / decision / unblocker / follow-up execution 时，按 `protocols/delegate.md` 创建或更新 delegate，并把相对路径写进 `related_delegates`。
-- 如果原始目标已完成且没有人类决策或后续执行需求，可以只更新项目页，不创建 delegate。
+- 任何 review / approval / decision / unblocker / follow-up execution 都写在 delegate 里；project page 只保留摘要和链接。
 
 ## Writing Rules
 

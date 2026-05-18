@@ -1,6 +1,6 @@
 # Delegate Protocol
 
-`Delegates/` 是统一的人类 review 队列。凡是需要 agent 执行、交付、人类批准、后续继续做的事项，都写成一个独立 delegate page。weekly review、calendar 修改草稿、创建 project 后继续 delegate，也都走这个队列。
+`Delegates/` 是统一的任务队列和人类 review 队列。凡是需要 agent 执行、交付、记录、人类批准、后续继续做的事项，都必须写成一个独立 delegate page。weekly review、calendar 修改草稿、创建或继续 project，也都先走这个队列。
 
 Source of truth 是本文件和 `Delegates/*.md`。Skill 可以帮助创建或更新页面，但不能替代本协议。
 
@@ -16,6 +16,16 @@ Delegates/{YYYY-MM-DD-HHMM-short-slug}.md
 - `short-slug` 由 agent 根据任务内容总结，使用短英文 slug。
 - 如果同一分钟同名冲突，在 slug 后加 `-2`、`-3`。
 - 不要发明额外 workflow bucket。产物放 `Artifacts/`，长期项目语境放 `Projects/`，然后从 delegate page 链接。
+
+## Project Rule
+
+Project 不能替代 delegate。任何创建 / 继续 project 的请求，都必须先创建或更新对应 delegate page；project page 只是额外的长期记录。
+
+- 只有用户明确要求创建 / 继续 project 时，才写入 `Projects/`。
+- Project page 只追加摘要、证据、成果链接和当前 delegate 链接，不复制 delegate 正文。
+- Delegate frontmatter 的 `related_projects` 必须写入相关 project page 路径。
+- Project frontmatter 的 `related_delegates` 必须写入相关 delegate page 路径。
+- 如果任务没有明确要求创建 / 继续 project，不要为了“整理上下文”自动创建或更新 project page。
 
 ## Status Model
 
@@ -105,21 +115,22 @@ Your response to the delegation from human. Lead with the user-facing result, th
 - 命令、参数、完整路径、导出文件清单、对比基准文件清单。
 - “如何确认”的细节：diff/signature 口径、验证命令、测试输出摘要、日志摘录。
 - 支撑可信度但不需要每天展开看的内容。
+- Google Calendar的链接
 
 Obsidian 默认收起 callout 使用这个格式，注意 `-` 表示默认收起：
 
 ```markdown
-> [!note]- 运行与验证明细
-> - 命令：`...`
-> - 输出摘要：...
-> - 文件：`/absolute/path`
+> [!note]- 折叠标题
+> - 折叠内容
 ```
 
-可用标题示例：
+标题示例：
 
 - `> [!note]- 运行与验证明细`
 - `> [!info]- 来源与对比口径`
 - `> [!warning]- 阻塞诊断`
+- `> [!abstract]- Google Calendar Link`
+- `> [!failure]- 运行失败`
 
 不要把真正的交付藏进 callout。比如周期性刷新任务里，“本次有多少新增/更新”“哪些变化值得处理”“哪些来源值得点开”必须展开；抓取命令、export 路径、比较算法、DNS/联网说明则应放进默认收起的 callout。
 
